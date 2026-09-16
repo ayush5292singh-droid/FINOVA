@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#080b14">
+<title>FINANCE MANAGER</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+
+<body>
+
+<div id="toast"></div>
+
+<div class="app">
+
+<header>
+  <div>
+    <div class="brand">FINANCE<span>MANAGER</span></div>
+    <div class="subtitle">SMART PERSONAL FINANCE</div>
+  </div>
+  <button class="icon-btn" onclick="toggleTheme()">☼</button>
+</header>
+
+<nav>
+  <button class="nav active" data-page="dashboard">⌂<small>Home</small></button>
+  <button class="nav" data-page="transactions">↕<small>Transactions</small></button>
+  <button class="nav" data-page="budgets">◫<small>Budgets</small></button>
+  <button class="nav" data-page="insights">◉<small>Insights</small></button>
+  <button class="nav" data-page="more">☷<small>More</small></button>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active-page">
+
+<div class="hero-card">
+  <div class="muted">TOTAL BALANCE</div>
+  <h1 id="balance">₹0</h1>
+  <div class="hero-row">
+    <span>↑ Income <b id="income">₹0</b></span>
+    <span>↓ Expenses <b id="expense">₹0</b></span>
+  </div>
+</div>
+
+<div class="quick-grid">
+  <button onclick="openTransaction('income')">＋ Income</button>
+  <button onclick="openTransaction('expense')">− Expense</button>
+  <button onclick="openTransfer()">⇄ Transfer</button>
+  <button onclick="openScanner()">▣ Scan</button>
+</div>
+
+<div class="section-title">
+  <h2>Monthly overview</h2>
+  <span id="monthName"></span>
+</div>
+
+<div class="card chart-card">
+  <canvas id="overviewChart"></canvas>
+</div>
+
+<div class="grid-two">
+  <div class="card">
+    <div class="muted">SAVINGS RATE</div>
+    <strong id="savingRate">0%</strong>
+  </div>
+  <div class="card">
+    <div class="muted">TRANSACTIONS</div>
+    <strong id="transactionCount">0</strong>
+  </div>
+</div>
+
+<div class="section-title">
+<h2>Recent transactions</h2>
+<button class="text-btn" onclick="showPage('transactions')">View all</button>
+</div>
+
+<div id="recentList"></div>
+
+<div class="section-title">
+<h2>Upcoming payments</h2>
+</div>
+
+<div id="upcomingList"></div>
+
+</section>
+
+
+<!-- TRANSACTIONS -->
+<section id="transactions" class="page">
+
+<div class="page-title">
+<h1>Transactions</h1>
+<button class="primary" onclick="openTransaction('expense')">＋ Add</button>
+</div>
+
+<div class="search">
+<input id="searchBox" placeholder="Search transactions..." oninput="renderTransactions()">
+</div>
+
+<div class="filter-row">
+<button class="filter active" onclick="setFilter('all',this)">All</button>
+<button class="filter" onclick="setFilter('income',this)">Income</button>
+<button class="filter" onclick="setFilter('expense',this)">Expenses</button>
+</div>
+
+<div id="transactionList"></div>
+
+</section>
+
+
+<!-- BUDGETS -->
+<section id="budgets" class="page">
+
+<div class="page-title">
+<h1>Budgets</h1>
+<button class="primary" onclick="openBudget()">＋ Budget</button>
+</div>
+
+<div id="budgetList"></div>
+
+<div class="section-title">
+<h2>Savings goals</h2>
+<button class="primary small" onclick="openGoal()">＋ Goal</button>
+</div>
+
+<div id="goalList"></div>
+
+</section>
+
+
+<!-- INSIGHTS -->
+<section id="insights" class="page">
+
+<div class="page-title">
+<h1>Insights</h1>
+</div>
+
+<div class="card insight-main">
+<div class="muted">FINANCIAL HEALTH</div>
+<div class="health-score" id="healthScore">--</div>
+<div id="healthText">Add some transactions to generate insights.</div>
+</div>
+
+<div class="section-title"><h2>Expense breakdown</h2></div>
+
+<div class="card chart-card">
+<canvas id="categoryChart"></canvas>
+</div>
+
+<div class="section-title"><h2>Smart insights</h2></div>
+<div id="smartInsights"></div>
+
+<div class="section-title"><h2>Monthly report</h2></div>
+<div class="card">
+<button class="wide-btn" onclick="generateReport()">Generate report</button>
+</div>
+
+</section>
+
+
+<!-- MORE -->
+<section id="more" class="page">
+
+<div class="page-title">
+<h1>More</h1>
+</div>
+
+<div class="premium-card">
+<div class="pro-badge">PRO</div>
+<h2>FINANCE MANAGER PRO</h2>
+<p>Unlock the complete financial toolkit.</p>
+<button onclick="openPremium()">VIEW PREMIUM</button>
+</div>
+
+<div class="menu-card">
+<button onclick="openAccounts()">🏦 Accounts</button>
+<button onclick="openRecurring()">🔁 Recurring payments</button>
+<button onclick="openLoans()">💳 Loans & EMI</button>
+<button onclick="openScanner()">📷 Receipt scanner</button>
+<button onclick="openCalendar()">📅 Financial calendar</button>
+<button onclick="exportData()">📤 Export data</button>
+<button onclick="backupData()">💾 Backup</button>
+<button onclick="restoreData()">📥 Restore</button>
+<button onclick="settings()">⚙ Settings</button>
+</div>
+
+</section>
+
+</main>
+
+<button class="floating" onclick="openTransaction('expense')">＋</button>
+
+</div>
+
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+<div class="modal-box">
+<button class="close" onclick="closeModal()">×</button>
+<div id="modalContent"></div>
+</div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
